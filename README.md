@@ -111,13 +111,13 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Counter);
+)(CounterContainer);
 
 // You can also pass an object instead of defining `mapDispatchToProps`:
-// export default connect(mapStateToProps, CounterActionCreators)(Counter);
+// export default connect(mapStateToProps, CounterActionCreators)(CounterContainer);
 
 // Or you can pass `dispatch` down as a prop if you omit `mapDispatchToProps`:
-// export default connect(mapStateToProps)(Counter);
+// export default connect(mapStateToProps)(CounterContainer);
 
 // See more recipes in detailed connect() examples below.
 ```
