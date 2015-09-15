@@ -89,30 +89,7 @@ export default function createConnect(React) {
         };
 
         shouldComponentUpdate(nextProps, nextState) {
-          if (!pure) {
-            this.updateState(nextProps);
-            return true;
-          }
-
-          const storeChanged = nextState.storeState !== this.state.storeState;
-          const propsChanged = !shallowEqual(nextProps, this.props);
-          let mapStateProducedChange = false;
-          let dispatchPropsChanged = false;
-
-          if (storeChanged || (propsChanged && shouldUpdateStateProps)) {
-            mapStateProducedChange = this.updateStateProps(nextProps);
-          }
-
-          if (propsChanged && shouldUpdateDispatchProps) {
-            dispatchPropsChanged = this.updateDispatchProps(nextProps);
-          }
-
-          if (propsChanged || mapStateProducedChange || dispatchPropsChanged) {
-            this.updateState(nextProps);
-            return true;
-          }
-
-          return false;
+          return !pure || !shallowEqual(this.state.props, nextState.props);
         }
 
         constructor(props, context) {
@@ -129,8 +106,9 @@ export default function createConnect(React) {
 
           this.stateProps = computeStateProps(this.store, props);
           this.dispatchProps = computeDispatchProps(this.store, props);
-          this.state = { storeState: null };
-          this.updateState();
+          this.state = {
+            props: this.computeNextState()
+          };
         }
 
         computeNextState(props = this.props) {
@@ -162,7 +140,12 @@ export default function createConnect(React) {
         }
 
         updateState(props = this.props) {
-          this.nextState = this.computeNextState(props);
+          const nextState = this.computeNextState(props);
+          if (!shallowEqual(nextState, this.state.props)) {
+            this.setState({
+              props: nextState
+            });
+          }
         }
 
         isSubscribed() {
@@ -187,6 +170,20 @@ export default function createConnect(React) {
           this.trySubscribe();
         }
 
+        componentWillReceiveProps(nextProps) {
+          if (!shallowEqual(nextProps, this.props)) {
+            if (shouldUpdateStateProps) {
+              this.updateStateProps(nextProps);
+            }
+
+            if (shouldUpdateDispatchProps) {
+              this.updateDispatchProps(nextProps);
+            }
+
+            this.updateState(nextProps);
+          }
+        }
+
         componentWillUnmount() {
           this.tryUnsubscribe();
         }
@@ -196,7 +193,9 @@ export default function createConnect(React) {
             return;
           }
 
-          this.setState({storeState: this.store.getState()});
+          if (this.updateStateProps()) {
+            this.updateState();
+          }
         }
 
         getWrappedInstance() {
@@ -206,7 +205,7 @@ export default function createConnect(React) {
         render() {
           return (
             <WrappedComponent ref='wrappedInstance'
-                              {...this.nextState} />
+                              {...this.state.props} />
           );
         }
       }
