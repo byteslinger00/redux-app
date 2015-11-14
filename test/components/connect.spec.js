@@ -426,12 +426,10 @@ describe('React', () => {
 
       let invocationCount = 0
 
-      /*eslint-disable no-unused-vars */
-      @connect((arg1) => {
+      @connect(() => {
         invocationCount++
         return {}
       })
-      /*eslint-enable no-unused-vars */
       class WithoutProps extends Component {
         render() {
           return <Passthrough {...this.props}/>
@@ -467,53 +465,6 @@ describe('React', () => {
       outerComponent.setFoo('DID')
 
       expect(invocationCount).toEqual(2)
-    })
-
-    it('should invoke mapState every time props are changed if it has zero arguments', () => {
-      const store = createStore(stringBuilder)
-
-      let invocationCount = 0
-
-      @connect(() => {
-        invocationCount++
-        return {}
-      })
-
-      class WithoutProps extends Component {
-        render() {
-          return <Passthrough {...this.props}/>
-        }
-      }
-
-      class OuterComponent extends Component {
-        constructor() {
-          super()
-          this.state = { foo: 'FOO' }
-        }
-
-        setFoo(foo) {
-          this.setState({ foo })
-        }
-
-        render() {
-          return (
-            <div>
-              <WithoutProps {...this.state} />
-            </div>
-          )
-        }
-      }
-
-      let outerComponent
-      TestUtils.renderIntoDocument(
-        <ProviderMock store={store}>
-          <OuterComponent ref={c => outerComponent = c} />
-        </ProviderMock>
-      )
-      outerComponent.setFoo('BAR')
-      outerComponent.setFoo('DID')
-
-      expect(invocationCount).toEqual(4)
     })
 
     it('should invoke mapState every time props are changed if it has a second argument', () => {
@@ -573,12 +524,10 @@ describe('React', () => {
 
       let invocationCount = 0
 
-      /*eslint-disable no-unused-vars */
-      @connect(null, (arg1) => {
+      @connect(null, () => {
         invocationCount++
         return {}
       })
-      /*eslint-enable no-unused-vars */
       class WithoutProps extends Component {
         render() {
           return <Passthrough {...this.props}/>
@@ -615,54 +564,6 @@ describe('React', () => {
       outerComponent.setFoo('DID')
 
       expect(invocationCount).toEqual(1)
-    })
-
-    it('should invoke mapDispatch every time props are changed if it has zero arguments', () => {
-      const store = createStore(stringBuilder)
-
-      let invocationCount = 0
-
-      @connect(null, () => {
-        invocationCount++
-        return {}
-      })
-
-      class WithoutProps extends Component {
-        render() {
-          return <Passthrough {...this.props}/>
-        }
-      }
-
-      class OuterComponent extends Component {
-        constructor() {
-          super()
-          this.state = { foo: 'FOO' }
-        }
-
-        setFoo(foo) {
-          this.setState({ foo })
-        }
-
-        render() {
-          return (
-            <div>
-              <WithoutProps {...this.state} />
-            </div>
-          )
-        }
-      }
-
-      let outerComponent
-      TestUtils.renderIntoDocument(
-        <ProviderMock store={store}>
-          <OuterComponent ref={c => outerComponent = c} />
-        </ProviderMock>
-      )
-
-      outerComponent.setFoo('BAR')
-      outerComponent.setFoo('DID')
-
-      expect(invocationCount).toEqual(3)
     })
 
     it('should invoke mapDispatch every time props are changed if it has a second argument', () => {
