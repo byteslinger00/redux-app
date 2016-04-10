@@ -1004,7 +1004,7 @@ describe('React', () => {
             {makeContainer(() => 1, () => ({}), () => ({}))}
           </ProviderMock>
         )
-      }).toThrow(/mapState/)
+      }).toThrow(/Connect\(Container\) mapState/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1012,7 +1012,7 @@ describe('React', () => {
             {makeContainer(() => 'hey', () => ({}), () => ({}))}
           </ProviderMock>
         )
-      }).toThrow(/mapState/)
+      }).toThrow(/Connect\(Container\) mapState/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1020,7 +1020,7 @@ describe('React', () => {
             {makeContainer(() => new AwesomeMap(), () => ({}), () => ({}))}
           </ProviderMock>
         )
-      }).toThrow(/mapState/)
+      }).toThrow(/Connect\(Container\) mapState/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1028,7 +1028,7 @@ describe('React', () => {
             {makeContainer(() => ({}), () => 1, () => ({}))}
           </ProviderMock>
         )
-      }).toThrow(/mapDispatch/)
+      }).toThrow(/Connect\(Container\) mapDispatch/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1036,7 +1036,7 @@ describe('React', () => {
             {makeContainer(() => ({}), () => 'hey', () => ({}))}
           </ProviderMock>
         )
-      }).toThrow(/mapDispatch/)
+      }).toThrow(/Connect\(Container\) mapDispatch/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1044,7 +1044,7 @@ describe('React', () => {
             {makeContainer(() => ({}), () => new AwesomeMap(), () => ({}))}
           </ProviderMock>
         )
-      }).toThrow(/mapDispatch/)
+      }).toThrow(/Connect\(Container\) mapDispatch/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1052,7 +1052,7 @@ describe('React', () => {
             {makeContainer(() => ({}), () => ({}), () => 1)}
           </ProviderMock>
         )
-      }).toThrow(/mergeProps/)
+      }).toThrow(/Connect\(Container\) mergeProps/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1060,7 +1060,7 @@ describe('React', () => {
             {makeContainer(() => ({}), () => ({}), () => 'hey')}
           </ProviderMock>
         )
-      }).toThrow(/mergeProps/)
+      }).toThrow(/Connect\(Container\) mergeProps/)
 
       expect(() => {
         TestUtils.renderIntoDocument(
@@ -1068,7 +1068,7 @@ describe('React', () => {
             {makeContainer(() => ({}), () => ({}), () => new AwesomeMap())}
           </ProviderMock>
         )
-      }).toThrow(/mergeProps/)
+      }).toThrow(/Connect\(Container\) mergeProps/)
     })
 
     it('should recalculate the state and rebind the actions on hot update', () => {
@@ -1639,38 +1639,5 @@ describe('React', () => {
       expect(mapStateCalls).toBe(2)
       expect(renderCalls).toBe(1)
     })
-
-    it('should update impure components with custom mergeProps', () => {
-      let store = createStore(() => ({}))
-      let renderCount = 0
-
-      @connect(null, null, () => ({ a: 1 }), { pure: false })
-      class Container extends React.Component {
-        render() {
-          ++renderCount
-          return <div />
-        }
-      }
-
-      class Parent extends React.Component {
-        componentDidMount() {
-          this.forceUpdate()
-        }
-        render() {
-          return <Container />
-        }
-      }
-
-      TestUtils.renderIntoDocument(
-        <ProviderMock store={store}>
-          <Parent>
-            <Container />
-          </Parent>
-        </ProviderMock>
-      )
-
-      expect(renderCount).toBe(2)
-    })
-
   })
 })
