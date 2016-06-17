@@ -1334,7 +1334,7 @@ describe('React', () => {
 
       const decorated = TestUtils.findRenderedComponentWithType(tree, Decorated)
       expect(() => decorated.getWrappedInstance()).toThrow(
-        /To access the wrapped instance, you need to specify \{ withRef: true \} as the fourth argument of the connect\(\) call\./
+        /To access the wrapped instance, you need to specify \{ withRef: true \} in the options argument of the connect\(\) call\./
       )
     })
 
@@ -1368,7 +1368,7 @@ describe('React', () => {
 
       expect(() => decorated.someInstanceMethod()).toThrow()
       expect(decorated.getWrappedInstance().someInstanceMethod()).toBe(someData)
-      expect(decorated.refs.wrappedInstance.someInstanceMethod()).toBe(someData)
+      expect(decorated.wrappedInstance.someInstanceMethod()).toBe(someData)
     })
 
     it('should wrap impure components without supressing updates', () => {
@@ -1611,17 +1611,17 @@ describe('React', () => {
       store.dispatch({ type: 'APPEND', body: 'a' })
       expect(mapStateCalls).toBe(2)
       expect(renderCalls).toBe(1)
-      expect(spy.calls.length).toBe(0)
+      expect(spy.calls.length).toBe(1)
 
       store.dispatch({ type: 'APPEND', body: 'a' })
       expect(mapStateCalls).toBe(3)
       expect(renderCalls).toBe(1)
-      expect(spy.calls.length).toBe(0)
+      expect(spy.calls.length).toBe(2)
 
       store.dispatch({ type: 'APPEND', body: 'a' })
       expect(mapStateCalls).toBe(4)
       expect(renderCalls).toBe(2)
-      expect(spy.calls.length).toBe(1)
+      expect(spy.calls.length).toBe(3)
 
       spy.destroy()
     })
