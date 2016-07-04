@@ -58,7 +58,7 @@ Instead, it *returns* a new, connected component class, for you to use.
 
 #### Arguments
 
-* [`mapStateToProps(state, [ownProps]): stateProps`] \(*Function*): If specified, the component will subscribe to Redux store updates. Any time it updates, `mapStateToProps` will be called. Its result must be a plain object*, and it will be merged into the component’s props. If you omit it, the component will not be subscribed to the Redux store. If `ownProps` is specified as a second argument, its value will be the props passed to your component, and `mapStateToProps` will be re-invoked whenever the component receives new props.
+* [`mapStateToProps(state, [ownProps]): stateProps`] \(*Function*): If specified, the component will subscribe to Redux store updates. Any time it updates, `mapStateToProps` will be called. Its result must be a plain object*, and it will be merged into the component’s props. If you omit it, the component will not be subscribed to the Redux store. If `ownProps` is specified as a second argument, its value will be the props passed to your component, and `mapStateToProps` will be additionally re-invoked whenever the component receives new props (e.g. if props received from a parent component have shallowly changed, and you use the ownProps argument, mapStateToProps is re-evaluated).
 
   >Note: in advanced scenarios where you need more control over the rendering performance, `mapStateToProps()` can also return a function. In this case, *that* function will be used as `mapStateToProps()` for a particular component instance. This allows you to do per-instance memoization. You can refer to [#279](https://github.com/reactjs/react-redux/pull/279) and the tests it adds for more details. Most apps never need this.
 
@@ -71,6 +71,40 @@ Instead, it *returns* a new, connected component class, for you to use.
 * [`options`] *(Object)* If specified, further customizes the behavior of the connector.
   * [`pure = true`] *(Boolean)*: If true, implements `shouldComponentUpdate` and shallowly compares the result of `mergeProps`, preventing unnecessary updates, assuming that the component is a “pure” component and does not rely on any input or state other than its props and the selected Redux store’s state. *Defaults to `true`.*
   * [`withRef = false`] *(Boolean)*: If true, stores a ref to the wrapped component instance and makes it available via `getWrappedInstance()` method. *Defaults to `false`.*
+
+> Note: `ownProps` **is not passed** to `mapStateToProps` and `mapDispatchToProps` if formal definition of the function contains one mandatory parameter (function has length 1). For example, function defined like below won't receive `ownProps` as the second argument.
+```javascript
+function mapStateToProps(state) {
+  console.log(state); // state
+  console.log(arguments[1]); // undefined
+}
+```
+```javascript
+const mapStateToProps = (state, ownProps = {}) => {
+  console.log(state); // state
+  console.log(ownProps); // undefined
+}
+```
+Functions with no mandatory parameters or two parameters **will receive** `ownProps`.
+```javascript
+const mapStateToProps = (state, ownProps) => {
+  console.log(state); // state
+  console.log(ownProps); // ownProps
+}
+```
+```javascript
+function mapStateToProps() {
+  console.log(arguments[0]); // state
+  console.log(arguments[1]); // ownProps
+}
+```
+```javascript
+const mapStateToProps = (...args) => {
+  console.log(arguments[0]); // state
+  console.log(arguments[1]); // ownProps
+}
+```
+
 
 #### Returns
 
