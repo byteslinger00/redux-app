@@ -24,28 +24,19 @@ ReactDOM.render(
 )
 ```
 
-##### React Router 0.13
-
-```js
-Router.run(routes, Router.HistoryLocation, (Handler, routerState) => { // note "routerState" here
-  ReactDOM.render(
-    <Provider store={store}>
-      {/* note "routerState" here: important to pass it down */}
-      <Handler routerState={routerState} />
-    </Provider>,
-    document.getElementById('root')
-  )
-})
-```
-
-##### React Router 1.0
+##### React Router
 
 ```js
 ReactDOM.render(
   <Provider store={store}>
-    <Router history={history}>...</Router>
+    <Router history={history}>
+      <Route path="/" component={App}>
+        <Route path="foo" component={Foo}/>
+        <Route path="bar" component={Bar}/>
+      </Route>
+    </Router>
   </Provider>,
-  targetEl
+  document.getElementById('root')
 )
 ```
 
@@ -71,6 +62,40 @@ Instead, it *returns* a new, connected component class, for you to use.
 * [`options`] *(Object)* If specified, further customizes the behavior of the connector.
   * [`pure = true`] *(Boolean)*: If true, implements `shouldComponentUpdate` and shallowly compares the result of `mergeProps`, preventing unnecessary updates, assuming that the component is a “pure” component and does not rely on any input or state other than its props and the selected Redux store’s state. *Defaults to `true`.*
   * [`withRef = false`] *(Boolean)*: If true, stores a ref to the wrapped component instance and makes it available via `getWrappedInstance()` method. *Defaults to `false`.*
+
+> Note: `ownProps` **is not passed** to `mapStateToProps` and `mapDispatchToProps` if formal definition of the function contains one mandatory parameter (function has length 1). For example, function defined like below won't receive `ownProps` as the second argument.
+```javascript
+function mapStateToProps(state) {
+  console.log(state); // state
+  console.log(arguments[1]); // undefined
+}
+```
+```javascript
+const mapStateToProps = (state, ownProps = {}) => {
+  console.log(state); // state
+  console.log(ownProps); // undefined
+}
+```
+Functions with no mandatory parameters or two parameters **will receive** `ownProps`.
+```javascript
+const mapStateToProps = (state, ownProps) => {
+  console.log(state); // state
+  console.log(ownProps); // ownProps
+}
+```
+```javascript
+function mapStateToProps() {
+  console.log(arguments[0]); // state
+  console.log(arguments[1]); // ownProps
+}
+```
+```javascript
+const mapStateToProps = (...args) => {
+  console.log(args[0]); // state
+  console.log(args[1]); // ownProps
+}
+```
+
 
 #### Returns
 

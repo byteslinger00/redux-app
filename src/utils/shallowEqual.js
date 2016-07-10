@@ -1,19 +1,23 @@
-const hasOwn = Object.prototype.hasOwnProperty
-
-export default function shallowEqual(a, b) {
-  if (a === b) return true
-
-  let countA = 0
-  let countB = 0
-  
-  for (let key in a) {
-    if (hasOwn.call(a, key) && a[key] !== b[key]) return false
-    countA++
+export default function shallowEqual(objA, objB) {
+  if (objA === objB) {
+    return true
   }
 
-  for (let key in b) {
-    if (hasOwn.call(b, key)) countB++
+  const keysA = Object.keys(objA)
+  const keysB = Object.keys(objB)
+
+  if (keysA.length !== keysB.length) {
+    return false
   }
 
-  return countA === countB
+  // Test for A's keys different from B.
+  const hasOwn = Object.prototype.hasOwnProperty
+  for (let i = 0; i < keysA.length; i++) {
+    if (!hasOwn.call(objB, keysA[i]) ||
+        objA[keysA[i]] !== objB[keysA[i]]) {
+      return false
+    }
+  }
+
+  return true
 }
