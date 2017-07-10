@@ -121,6 +121,7 @@ export default function connectAdvanced(
         this.renderCount = 0
         this.store = props[storeKey] || context[storeKey]
         this.propsMode = Boolean(props[storeKey])
+        this.setWrappedInstance = this.setWrappedInstance.bind(this)
 
         invariant(this.store,
           `Could not find "${storeKey}" in either the context or props of ` +
@@ -221,7 +222,7 @@ export default function connectAdvanced(
       notifyNestedSubsOnComponentDidUpdate() {
         // `componentDidUpdate` is conditionally implemented when `onStateChange` determines it
         // needs to notify nested subs. Once called, it unimplements itself until further state
-        // changes occur. Doing it this way vs having a permanent `componentDidMount` that does
+        // changes occur. Doing it this way vs having a permanent `componentDidUpdate` that does
         // a boolean check every time avoids an extra method call most of the time, resulting
         // in some perf boost.
         this.componentDidUpdate = undefined
@@ -239,7 +240,7 @@ export default function connectAdvanced(
         // instance. a singleton memoized selector would then be holding a reference to the
         // instance, preventing the instance from being garbage collected, and that would be bad
         const withExtras = { ...props }
-        if (withRef) withExtras.ref = this.setWrappedInstance.bind(this)
+        if (withRef) withExtras.ref = this.setWrappedInstance
         if (renderCountProp) withExtras[renderCountProp] = this.renderCount++
         if (this.propsMode && this.subscription) withExtras[subscriptionKey] = this.subscription
         return withExtras
