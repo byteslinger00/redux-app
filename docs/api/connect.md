@@ -3,7 +3,10 @@ id: connect
 title: Connect
 sidebar_label: connect()
 hide_title: true
+description: 'API > connect: a Higher-Order Component to interact with Redux'
 ---
+
+&nbsp;
 
 # `connect()`
 
@@ -577,7 +580,6 @@ const makeMapState = (state) => {
 }
 export default connect(makeMapState)(SomeComponent)
 ```
-
 
 ## Legacy Version Docs
 
