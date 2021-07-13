@@ -7,10 +7,8 @@ import pkg from './package.json'
 
 const env = process.env.NODE_ENV
 
-const extensions = ['.js', '.ts', '.tsx', '.json']
-
 const config = {
-  input: 'src/index.ts',
+  input: 'src/index.js',
   external: Object.keys(pkg.peerDependencies || {}).concat('react-dom'),
   output: {
     format: 'umd',
@@ -22,18 +20,13 @@ const config = {
     },
   },
   plugins: [
-    nodeResolve({
-      extensions,
-    }),
+    nodeResolve(),
     babel({
-      include: 'src/**/*',
       exclude: '**/node_modules/**',
       babelHelpers: 'runtime',
-      extensions,
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env),
-      preventAssignment: true,
     }),
     commonjs(),
   ],

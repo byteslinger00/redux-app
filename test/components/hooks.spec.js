@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { createStore } from 'redux'
-import { Provider as ProviderMock, connect } from '../../src/index'
+import { Provider as ProviderMock, connect } from '../../src/index.js'
 import * as rtl from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
