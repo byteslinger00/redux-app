@@ -528,6 +528,7 @@ function connect<
     const displayName = `Connect(${wrappedComponentName})`
 
     const selectorFactoryOptions: SelectorFactoryOptions<any, any, any, any> = {
+      pure,
       shouldHandleStateChanges,
       displayName,
       wrappedComponentName,
@@ -541,6 +542,11 @@ function connect<
       areOwnPropsEqual,
       areMergedPropsEqual,
     }
+
+    // If we aren't running in "pure" mode, we don't want to memoize values.
+    // To avoid conditionally calling hooks, we fall back to a tiny wrapper
+    // that just executes the given callback immediately.
+    const usePureOnlyMemo = pure ? useMemo : (callback: () => any) => callback()
 
     function ConnectFunction<TOwnProps>(
       props: InternalConnectProps & TOwnProps
@@ -661,7 +667,7 @@ function connect<
         }
       }, [])
 
-      const actualChildPropsSelector = useMemo(() => {
+      const actualChildPropsSelector = usePureOnlyMemo(() => {
         const selector = () => {
           // Tricky logic here:
           // - This render may have been triggered by a Redux store update that produced new child props
@@ -784,6 +790,7 @@ function connect<
       return renderedChild
     }
 
+    // If we're in "pure" mode, ensure our wrapper component only re-renders when incoming props have changed.
     const _Connect = React.memo(ConnectFunction)
 
     type ConnectedWrapperComponent = typeof _Connect & {
