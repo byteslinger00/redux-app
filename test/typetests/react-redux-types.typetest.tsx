@@ -99,12 +99,7 @@ class App extends Component<any, any> {
 
 const targetEl = document.getElementById('root')
 
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  targetEl
-)
+ReactDOM.render(<Provider store={store}>{() => <App />}</Provider>, targetEl)
 
 declare var store: Store<TodoState>
 class MyRootComponent extends Component<any, any> {}
@@ -130,9 +125,7 @@ declare var todoActionCreators: { [type: string]: (...args: any[]) => any }
 declare var counterActionCreators: { [type: string]: (...args: any[]) => any }
 
 ReactDOM.render(
-  <Provider store={store}>
-    <MyRootComponent />
-  </Provider>,
+  <Provider store={store}>{() => <MyRootComponent />}</Provider>,
   document.body
 )
 
