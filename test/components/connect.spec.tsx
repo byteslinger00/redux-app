@@ -845,10 +845,8 @@ describe('React', () => {
             <OuterComponent ref={outerComponent} />
           </ProviderMock>
         )
-        rtl.act(() => {
-          outerComponent.current!.setFoo('BAR')
-          outerComponent.current!.setFoo('DID')
-        })
+        outerComponent.current!.setFoo('BAR')
+        outerComponent.current!.setFoo('DID')
 
         expect(invocationCount).toEqual(1)
       })

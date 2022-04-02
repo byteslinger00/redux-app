@@ -13,7 +13,7 @@ const tsTestFolderPath = (folderName) =>
 
 const tsStandardConfig = {
   ...defaults,
-  displayName: 'ReactDOM 18',
+  displayName: 'ReactDOM',
   preset: 'ts-jest',
   testMatch: NORMAL_TEST_FOLDERS.map(tsTestFolderPath),
 }
@@ -29,30 +29,18 @@ const rnConfig = {
   },
 }
 
-const standardReact17Config = {
+const compatEntryConfig = {
   ...tsStandardConfig,
-  displayName: 'ReactDOM 17',
+  displayName: 'Compat',
   moduleNameMapper: {
     '^react$': 'react-17',
     '^react-dom$': 'react-dom-17',
     '^react-test-renderer$': 'react-test-renderer-17',
     '^@testing-library/react$': '@testing-library/react-12',
-  },
-}
-
-const nextEntryConfig = {
-  ...tsStandardConfig,
-  displayName: 'Next',
-  moduleNameMapper: {
-    '../../src/index': '<rootDir>/src/next',
+    '../../src/index': '<rootDir>/src/compat',
   },
 }
 
 module.exports = {
-  projects: [
-    tsStandardConfig,
-    rnConfig,
-    standardReact17Config,
-    nextEntryConfig,
-  ],
+  projects: [tsStandardConfig, rnConfig, compatEntryConfig],
 }
