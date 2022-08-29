@@ -231,12 +231,7 @@ export interface ConnectOptions<
 > {
   forwardRef?: boolean
   context?: typeof ReactReduxContext
-  areStatesEqual?: (
-    nextState: State,
-    prevState: State,
-    nextOwnProps: TOwnProps,
-    prevOwnProps: TOwnProps
-  ) => boolean
+  areStatesEqual?: (nextState: State, prevState: State) => boolean
 
   areOwnPropsEqual?: (
     nextOwnProps: TOwnProps,
@@ -701,7 +696,7 @@ function connect<
         notifyNestedSubs,
       ])
 
-      let actualChildProps: unknown
+      let actualChildProps: uSES
 
       try {
         actualChildProps = useSyncExternalStore(
