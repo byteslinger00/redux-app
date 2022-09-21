@@ -1,4 +1,9 @@
-import { ClassAttributes, ComponentClass, ComponentType } from 'react'
+import {
+  ClassAttributes,
+  ComponentClass,
+  ComponentType,
+  FunctionComponent,
+} from 'react'
 
 import { Action, AnyAction, Dispatch } from 'redux'
 
@@ -9,8 +14,6 @@ import type { ConnectProps } from './components/connect'
 export type FixTypeLater = any
 
 export type EqualityFn<T> = (a: T, b: T) => boolean
-
-export type ExtendedEqualityFn<T, P> = (a: T, b: T, c: P, d: P) => boolean
 
 export type AnyIfEmpty<T extends object> = keyof T extends never ? any : T
 
@@ -84,7 +87,7 @@ export type GetLibraryManagedProps<C> = JSX.LibraryManagedAttributes<
 export type ConnectedComponent<
   C extends ComponentType<any>,
   P
-> = ComponentType<P> &
+> = FunctionComponent<P> &
   NonReactStatics<C> & {
     WrappedComponent: C
   }
