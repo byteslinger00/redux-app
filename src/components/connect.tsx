@@ -1,17 +1,17 @@
 /* eslint-disable valid-jsdoc, @typescript-eslint/no-unused-vars */
 import hoistStatics from 'hoist-non-react-statics'
-import React, { ComponentType, useContext, useMemo, useRef } from 'react'
+import React, { useContext, useMemo, useRef } from 'react'
 import { isValidElementType, isContextConsumer } from 'react-is'
 
 import type { Store } from 'redux'
 
 import type {
+  AdvancedComponentDecorator,
   ConnectedComponent,
   InferableComponentEnhancer,
   InferableComponentEnhancerWithProps,
   ResolveThunks,
   DispatchProp,
-  ConnectPropsMaybeWithoutContext,
 } from '../types'
 
 import defaultSelectorFactory, {
@@ -231,7 +231,12 @@ export interface ConnectOptions<
 > {
   forwardRef?: boolean
   context?: typeof ReactReduxContext
-  areStatesEqual?: (nextState: State, prevState: State) => boolean
+  areStatesEqual?: (
+    nextState: State,
+    prevState: State,
+    nextOwnProps: TOwnProps,
+    prevOwnProps: TOwnProps
+  ) => boolean
 
   areOwnPropsEqual?: (
     nextOwnProps: TOwnProps,
@@ -465,18 +470,18 @@ function connect<
 
   const Context = context
 
+  type WrappedComponentProps = TOwnProps & ConnectProps
+
   const initMapStateToProps = mapStateToPropsFactory(mapStateToProps)
   const initMapDispatchToProps = mapDispatchToPropsFactory(mapDispatchToProps)
   const initMergeProps = mergePropsFactory(mergeProps)
 
   const shouldHandleStateChanges = Boolean(mapStateToProps)
 
-  const wrapWithConnect = <TProps,>(
-    WrappedComponent: ComponentType<TProps>
-  ) => {
-    type WrappedComponentProps = TProps &
-      ConnectPropsMaybeWithoutContext<TProps>
-
+  const wrapWithConnect: AdvancedComponentDecorator<
+    TOwnProps,
+    WrappedComponentProps
+  > = (WrappedComponent) => {
     if (
       process.env.NODE_ENV !== 'production' &&
       !isValidElementType(WrappedComponent)
@@ -696,7 +701,7 @@ function connect<
         notifyNestedSubs,
       ])
 
-      let actualChildProps: uSES
+      let actualChildProps: Record<string, unknown>
 
       try {
         actualChildProps = useSyncExternalStore(
