@@ -4,7 +4,7 @@ import { createSubscription } from '../utils/Subscription'
 import { useIsomorphicLayoutEffect } from '../utils/useIsomorphicLayoutEffect'
 import { Action, AnyAction, Store } from 'redux'
 
-export interface ProviderProps<A extends Action = AnyAction, S = unknown> {
+export interface ProviderProps<A extends Action = AnyAction, S = any> {
   /**
    * The single Redux store in your application.
    */
@@ -24,12 +24,12 @@ export interface ProviderProps<A extends Action = AnyAction, S = unknown> {
   children: ReactNode
 }
 
-function Provider<A extends Action = AnyAction, S = unknown>({
+function Provider<A extends Action = AnyAction>({
   store,
   context,
   children,
   serverState,
-}: ProviderProps<A, S>) {
+}: ProviderProps<A>) {
   const contextValue = useMemo(() => {
     const subscription = createSubscription(store)
     return {
